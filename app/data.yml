@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data
+  labels:
+    app: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - image: cameornwhite/quotes-data:v1 
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_DATABASE
+          value: mydatabase
+        - name: MYSQL_USER
+          value: root
+        - name: MYSQL_PASSWORD
+          value: root
+        ports:
+        - containerPort: 3306 
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim        # Create a PersistentVolumeClaim, without it, we can't request a PersistentVolume
+metadata:
+  name: mysql-pv-claim 
+  labels:
+    app: api
+spec:
+  storageClassName: standard
+  accessModes:
+  # Claim name and labels
+  # The storage class mounted as read-write by a single Node
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 300Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data
+  labels:
+    app: api
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: api
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolume # minikube specific. Normally, persistent volumes don't need to be explicitly created
+metadata:
+  name: mysql-pv 
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 300Mi
+  accessModes:
+  - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+  persistentVolumeReclaimPolicy: Retain 
