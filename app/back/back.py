@@ -4,11 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from sqlalchemy import exc
 import json
+import osd
 from random import randint
 from flask import request
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@data:3306/mydatabase'
+app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ['SQLALCHEMY_DATABASE_URI']
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 #app.secret_key = 'changethis'
