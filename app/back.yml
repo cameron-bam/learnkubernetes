@@ -21,8 +21,18 @@ spec:
         - containerPort: 3000
           name: http
         env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: mysql-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: mysql-password
         - name: SQLALCHEMY_DATABASE_URI
-          value: "mysql+pymysql://root:root@data:3306/mydatabase"
+          value: "mysql+pymysql://$MYSQL_USER:$MYSQL_PASSWORD@data:3306/mydatabase"
 ---
 apiVersion: v1
 kind: Service
