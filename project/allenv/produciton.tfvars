@@ -1,0 +1,10 @@
+credentials = "./auth/mykubernetesproject-285821-f95be9f750e5.json"
+project = "mykubernetesproject-285821"
+region = "us-west2-a"
+cluster_name = "my-production-cluster" 
+network = "default"
+initial_node_count = 1 
+node_name = "my-node-pool" 
+node_count = 3 
+preemptible = false 
+machine_type = "f1-micro"
