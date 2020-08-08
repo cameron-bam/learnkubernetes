@@ -14,6 +14,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 --
 -- Table structure for table `quotes` --
+DROP DATABASE IF EXISTS `mydatabase`;
 CREATE DATABASE `mydatabase`;
 USE `mydatabase`;
 DROP TABLE IF EXISTS `quotes`;

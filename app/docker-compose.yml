@@ -7,7 +7,7 @@ services:
     networks:
       - myapp
   data:
-    image: cameornwhite/quotes-back:v1
+    image: cameornwhite/quotes-data:v1
     container_name: data
     ports:
       - "3306:3306"
@@ -18,8 +18,6 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     networks: 
       myapp:
-        aliases:
-          - data
 
 networks:
   myapp:
