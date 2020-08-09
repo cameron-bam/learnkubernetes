@@ -1,3 +1,0 @@
-- copy:
-    content: "{{ lookup('env','HOSTNAME') }}" 
-    dest: /tmp/hostname.txt
