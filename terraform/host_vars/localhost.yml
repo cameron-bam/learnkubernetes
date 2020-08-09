@@ -20,4 +20,4 @@ terraform:
     node_name: "my-node-pool" 
     node_count: 2 
     preemptible: "true" 
-    machine_type: "f1-micro"
+    machine_type: "g1-small"
