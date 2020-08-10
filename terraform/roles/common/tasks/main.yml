@@ -1,2 +1,8 @@
 - name: configure tfvars 
   import_tasks: tfvars.yml
+
+- name: Create a cluster
+  import_tasks: create_cluster.yml
+
+- name: Destroy cluster
+  import_tasks: destroy_cluster.yml

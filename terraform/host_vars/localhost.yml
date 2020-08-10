@@ -10,6 +10,7 @@ terraform:
     node_count: 3
     preemptible: "false" 
     machine_type: "n1-standard-1"
+    bucket: "terraform-production-bb7063358a5af662b0cf90c5c7ca7e46"
   testing:
     credentials: "auth/mykubernetesproject-285821-f95be9f750e5.json" 
     project: "mykubernetesproject-285821" 
@@ -21,3 +22,4 @@ terraform:
     node_count: 2 
     preemptible: "true" 
     machine_type: "g1-small"
+    bucket: "terraform-testing-d93bc01c9e907465315fd5fb26913674"

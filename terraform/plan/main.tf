@@ -4,6 +4,18 @@ provider "google" {
     region = "${var.region}"
 }
 
+terraform {
+  backend "gcs" {}
+}
+
+data "terraform_remote_state" "state" {
+    backend = "gcs"
+    config = {
+        bucket = "${var.bucket}"
+        prefix = "terraform/state"
+    }
+}
+
 resource "google_container_cluster" "primary" {
     name = "${var.cluster_name}"
     network = "${var.network}"
