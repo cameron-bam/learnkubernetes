@@ -10,5 +10,5 @@
 
 - name: Debug terraform
   debug:
-    var: terraform.outputs
+    var: terraform.command
   when: terraform is defined and not terraform.failed
