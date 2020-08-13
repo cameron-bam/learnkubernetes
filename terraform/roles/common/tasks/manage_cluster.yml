@@ -1,0 +1,14 @@
+- name: Manage cluster 
+  environment:
+    GOOGLE_APPLICATION_CREDENTIALS: "{{ playbook_dir }}/plan/{{ terraform[ '%s' | format(env)].credentials }}"
+  terraform:
+    project_path: "{{ playbook_dir }}/plan"
+    workspace: "{{ env }}"
+    state: "{{ operation }}"
+  register: terraform
+  when: operation is defined
+
+- name: Debug terraform
+  debug:
+    var: terraform.outputs
+  when: terraform is defined and not terraform.failed
