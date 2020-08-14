@@ -6,7 +6,7 @@
 ## Run Quotes App on GKE Cluster
 - `gcloud container clusters get-credentials ${cluster_name} --region ${region} --project ${project}`
 - Get the name of the cluster:
--- `kubectl config get-contexts`
+    - `kubectl config get-contexts`
 - Switch to this context:
--- `kubectl config set-context ${context_name} && kubectl config set-context --current --namespace=default`
+    - `kubectl config set-context ${context_name} && kubectl config set-context --current --namespace=default`
 - `cd terraform && helm install --debug ./quotes/ --generate-name`
