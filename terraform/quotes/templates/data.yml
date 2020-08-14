@@ -29,16 +29,6 @@ spec:
             secretKeyRef:
               name: api-secrets
               key: mysql-database
-        - name: MYSQL_USER
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: mysql-user
-        - name: MYSQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: mysql-password
         ports:
         - containerPort: 3306 
           name: mysql
