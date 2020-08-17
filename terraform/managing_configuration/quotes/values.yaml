@@ -1,0 +1,11 @@
+back:
+  replicaCount: 1
+  name: back
+  container:
+    image: cameornwhite/quotes-back:v1 
+    name: api
+    port:
+      number: 3000
+      name: http
+data:
+  name: data

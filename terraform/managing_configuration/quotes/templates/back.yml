@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "{{ .Release.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  name: api
+spec:
+  replicas: {{ .Values.back.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.back.name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.back.name }}"
+    spec:
+      containers:
+      - image: "{{ .Values.back.container.image }}"
+        name: "{{ .Values.back.container.name }}"
+        ports:
+        - containerPort: {{ .Values.back.container.port.number }}
+          name: "{{ .Values.back.container.port.name }}"
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: mysql-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: mysql-password
+        - name: SQLALCHEMY_DATABASE_URI
+          value: "mysql+pymysql://$MYSQL_USER:$MYSQL_PASSWORD@data:3306/mydatabase"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: 
+    api-load-balancer 
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 3000
+    nodePort: 30001
+  selector:
+    app: api
+  type: LoadBalancer  

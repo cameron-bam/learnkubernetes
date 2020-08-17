@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "{{ .Release.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}" 
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  name: "data"
+spec:
+  selector:
+    matchLabels:
+      app: api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - image: cameornwhite/quotes-data:v1 
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: mysql-root-password
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: mysql-database
+        ports:
+        - containerPort: 3306 
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+          subPath: mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim: 
+          claimName: mysql-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim        # Create a PersistentVolumeClaim, without it, we can't request a PersistentVolume
+metadata:
+  name: mysql-pv-claim 
+  labels:
+    app: api
+spec:
+  storageClassName: standard
+  accessModes:
+  # Claim name and labels
+  # The storage class mounted as read-write by a single Node
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data
+  labels:
+    app: api
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: api
+  clusterIP: None
