@@ -8,4 +8,28 @@ back:
       number: 3000
       name: http
 data:
-  name: data
+  name: api
+  pvc:
+    name: mysql-pv-claim
+    resources:
+      requests:
+        storage: 10Gi
+  service:
+    name: data
+    port: 3306
+    clusterIP: None
+  container:
+    image: cameornwhite/quotes-data:v1
+    name: mysql
+    port:
+      containerPort: 3306
+      name: mysql
+    volumeMounts:
+      name: mysql-persistent-storage
+      mountPath: /var/lib/mysql
+      subPath: mysql
+    volume:
+      name: mysql-persistent-storage
+      persistentVolumeClaim:
+        claimName: mysql-pv-claim
+    

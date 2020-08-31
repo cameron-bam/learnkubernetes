@@ -6,21 +6,21 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}" 
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-  name: "data"
+  name: "{{ .Values.data.name }}"
 spec:
   selector:
     matchLabels:
-      app: api
+      app: "{{ .Values.data.name }}"
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: api
+        app: "{{ .Values.data.name }}"
     spec:
       containers:
-      - image: cameornwhite/quotes-data:v1 
-        name: mysql
+      - image: "{{ .Values.data.container.image }}"
+        name: "{{ .Values.data.container.name }}"
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -33,23 +33,23 @@ spec:
               name: api-secrets
               key: mysql-database
         ports:
-        - containerPort: 3306 
-          name: mysql
+        - containerPort: {{ .Values.data.container.port.containerPort }}
+          name: "{{ .Values.data.container.port.name }}"
         volumeMounts:
-        - name: mysql-persistent-storage
-          mountPath: /var/lib/mysql
-          subPath: mysql
+        - name: "{{ .Values.data.container.volumeMounts.name }}"
+          mountPath: "{{ .Values.data.container.volumeMounts.mountPath }}"
+          subPath: "{{ .Values.data.container.volumeMounts.subPath }}"
       volumes:
-      - name: mysql-persistent-storage
+      - name: "{{ .Values.data.container.volume.name }}"
         persistentVolumeClaim: 
-          claimName: mysql-pv-claim
+          claimName: "{{ .Values.data.container.volume.persistentVolumeClaim.claimName }}"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim        # Create a PersistentVolumeClaim, without it, we can't request a PersistentVolume
 metadata:
-  name: mysql-pv-claim 
+  name: {{ .Values.data.pvc.name }}
   labels:
-    app: api
+    app: {{ .Values.data.name }}
 spec:
   storageClassName: standard
   accessModes:
@@ -58,17 +58,17 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: {{ .Values.data.pvc.resources.requests.storage }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: data
+  name: {{ .Values.data.service.name }}
   labels:
-    app: api
+    app: {{ .Values.data.name }}
 spec:
   ports:
-  - port: 3306
+  - port: {{ .Values.data.service.port }}
   selector:
-    app: api
-  clusterIP: None
+    app: {{ .Values.data.name }}
+  clusterIP: {{ .Values.data.service.clusterIP }}

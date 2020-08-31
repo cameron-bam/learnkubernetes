@@ -9,4 +9,5 @@
     - `kubectl config get-contexts`
 - Switch to this context:
     - `kubectl config set-context ${context_name} && kubectl config set-context --current --namespace=default`
-- `cd terraform && helm install --debug ./quotes/ --generate-name`
+- Run Quotes App
+    - `helm install --debug ./quotes/ --generate-name`

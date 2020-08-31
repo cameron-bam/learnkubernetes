@@ -5,12 +5,12 @@
     project_path: "{{ playbook_dir }}/plan"
     workspace: "{{ env }}"
     state: "{{ operation }}"
-  register: terraform
+  register: terraform_result
   when: operation is defined
 
 - name: Add cluster to kubectl
   command: "gcloud container clusters get-credentials {{ terraform[ '%s' | format(env)].cluster_name }} --region {{ terraform[ '%s' | format(env)].region }} --project {{ terraform[ '%s' | format(env)].project }}"
-  when: terraform is defined and not terraform.failed and operation is defined and operation != "absent"
+  when: terraform_result is defined and not terraform_result.failed and operation is defined and operation != "absent"
   register: kubectl_credentials
 
 - name: Set default namespace
