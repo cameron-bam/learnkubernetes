@@ -1,3 +1,4 @@
 auth/
 .terraform/
 terraform/plan/terraform.tfvars
+**/*.dec
