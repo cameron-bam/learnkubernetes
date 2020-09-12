@@ -10,9 +10,14 @@
 
 - name: Add cluster to kubectl
   command: "gcloud container clusters get-credentials {{ terraform[ '%s' | format(env)].cluster_name }} --region {{ terraform[ '%s' | format(env)].region }} --project {{ terraform[ '%s' | format(env)].project }}"
-  when: terraform_result is defined and not terraform_result.failed and operation is defined and operation != "absent"
+  when: 
+    - terraform_result is defined
+    - terraform_result is not failed
+    - operation is defined
+    - operation != "absent"
   register: kubectl_credentials
 
 - name: Set default namespace
+  debugger: on_failed
   command: kubectl config set-context --current --namespace=default
-  when: not kubectl_credentials.skipped
+  when: kubectl_credentials is not skipped
