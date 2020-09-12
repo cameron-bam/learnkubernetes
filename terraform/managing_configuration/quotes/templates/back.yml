@@ -6,7 +6,7 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-  name: api
+  name: "{{ .Values.back.name }}"
 spec:
   replicas: {{ .Values.back.replicaCount }}
   selector:
@@ -24,30 +24,26 @@ spec:
         - containerPort: {{ .Values.back.container.port.number }}
           name: "{{ .Values.back.container.port.name }}"
         env:
-        - name: MYSQL_USER
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: mysql-user
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: api-secrets
-              key: mysql-password
+              name: "{{ .Values.data.name }}-secret"
+              key: mysql_password
         - name: SQLALCHEMY_DATABASE_URI
-          value: "mysql+pymysql://$MYSQL_USER:$MYSQL_PASSWORD@data:3306/mydatabase"
+          value: "mysql+pymysql://{{ .Values.back.mysql.user }}:$MYSQL_PASSWORD@{{ .Values.data.name }}:{{ .Values.back.mysql.port }}/{{ .Values.back.mysql.database }}"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: 
-    api-load-balancer 
+  name: {{ .Values.back.service.name }}
 spec:
   ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 3000
-    nodePort: 30001
+  {{- range .Values.back.service.ports }}
+  - port: {{ .port }}
+    protocol: {{ .protocol }}
+    targetPort: {{ .targetPort }}
+    nodePort: {{ .nodePort }}
+  {{- end }}
   selector:
-    app: api
-  type: LoadBalancer  
+    app: {{ .Values.back.name }}
+  type: LoadBalancer

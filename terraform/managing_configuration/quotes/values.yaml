@@ -7,20 +7,25 @@ back:
     port:
       number: 3000
       name: http
-data:
-  name: api
-  pvc:
-    name: mysql-pv-claim
-    resources:
-      requests:
-        storage: 10Gi
+  mysql:
+    user: root
   service:
-    name: data
-    port: 3306
-    clusterIP: None
+    name: api-load-balancer
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3000
+      nodePort: 30001
+data:
+  name: data
   container:
     image: cameornwhite/quotes-data:v1
     name: mysql
+    env:
+    - name: "MYSQL_USER"
+      value: "root"
+    - name: "MYSQL_DATABASE"
+      value: "mydatabase"
     port:
       containerPort: 3306
       name: mysql
@@ -32,4 +37,12 @@ data:
       name: mysql-persistent-storage
       persistentVolumeClaim:
         claimName: mysql-pv-claim
-    
+  service:
+    name: data
+    port: 3306
+    clusterIP: None
+  pvc:
+    name: mysql-pv-claim
+    resources:
+      requests:
+        storage: 10Gi
